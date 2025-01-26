@@ -272,3 +272,20 @@ test('purchase with login', async ({ page }) => {
     await page.getByRole('textbox', { name: 'store name' }).fill('byu');
     await page.getByRole('button', { name: 'Create' }).click();
   });
+
+  test('close store', async ({ page }) => {
+    await setupRoutes(page);
+    await franchiseRoutes(page);
+    await page.goto('/');
+
+    await page.getByRole('link', { name: 'Login' }).click();
+    await page.getByRole('textbox', { name: 'Email address' }).click();
+    await page.getByRole('textbox', { name: 'Email address' }).fill('d@jwt.com');
+    await page.getByRole('textbox', { name: 'Email address' }).press('Tab');
+    await page.getByRole('textbox', { name: 'Password' }).fill('a');
+    await page.getByRole('button', { name: 'Login' }).click();
+
+    await page.getByLabel('Global').getByRole('link', { name: 'Franchise' }).click();
+
+    
+  });
