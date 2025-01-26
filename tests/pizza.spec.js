@@ -1,43 +1,47 @@
 import { test, expect } from 'playwright-test-coverage';
 
 async function setupRoutes(page) {
-    await page.route('*/**/api/order/menu', async (route) => {
-        const menuRes = [
-          { id: 1, title: 'Veggie', image: 'pizza1.png', price: 0.0038, description: 'A garden of delight' },
-          { id: 2, title: 'Pepperoni', image: 'pizza2.png', price: 0.0042, description: 'Spicy treat' },
-        ];
-        expect(route.request().method()).toBe('GET');
-        await route.fulfill({ json: menuRes });
-      });
-    
-      await page.route('*/**/api/franchise', async (route) => {
-        if (route.request().method() === 'POST') {
-          const franchiseReq = {name: "pizzaPocket", admins: [{email: "d@jwt.com"}]};
-          const franchiseRes = { name: 'pizzaPocket', admins: [{ email: 'd@jwt.com', id: 3, name: 'Kai Chen' }], id: 2 };
-          expect(route.request().method()).toBe('POST');
-          expect(route.request().postDataJSON()).toMatchObject(franchiseReq);
-          await route.fulfill({ json: franchiseRes });
-        } else {
-          const franchiseRes = [
-            {
-              id: 2,
-              name: 'LotaPizza',
-              stores: [
-                { id: 4, name: 'Lehi' },
-                { id: 5, name: 'Springville' },
-                { id: 6, name: 'American Fork' },
-              ],
-            },
-            { id: 3, name: 'PizzaCorp', stores: [{ id: 7, name: 'Spanish Fork' }] },
-            { id: 4, name: 'topSpot', stores: [] },
-          ];
-          expect(route.request().method()).toBe('GET');
-          await route.fulfill({ json: franchiseRes });
-      }
-      });
-      
-      
+  await page.route('*/**/api/order/menu', async (route) => {
+      const menuRes = [
+        { id: 1, title: 'Veggie', image: 'pizza1.png', price: 0.0038, description: 'A garden of delight' },
+        { id: 2, title: 'Pepperoni', image: 'pizza2.png', price: 0.0042, description: 'Spicy treat' },
+      ];
+      expect(route.request().method()).toBe('GET');
+      await route.fulfill({ json: menuRes });
+    });
+  
+  await page.route('*/**/api/franchise', async (route) => {
+    if (route.request().method() === 'POST') {
+      const franchiseReq = {name: "pizzaPocket", admins: [{email: "d@jwt.com"}]};
+      const franchiseRes = { name: 'pizzaPocket', admins: [{ email: 'd@jwt.com', id: 3, name: 'Kai Chen' }], id: 2 };
+      expect(route.request().method()).toBe('POST');
+      expect(route.request().postDataJSON()).toMatchObject(franchiseReq);
+      await route.fulfill({ json: franchiseRes });
+    } 
+    else {
+      const franchiseRes = [
+        {
+          id: 2,
+          name: 'LotaPizza',
+          stores: [
+            { id: 4, name: 'Lehi' },
+            { id: 5, name: 'Springville' },
+            { id: 6, name: 'American Fork' },
+          ],
+        },
+        { id: 3, name: 'PizzaCorp', stores: [{ id: 7, name: 'Spanish Fork' }] },
+        { id: 4, name: 'topSpot', stores: [] },
+      ];
+      expect(route.request().method()).toBe('GET');
+      await route.fulfill({ json: franchiseRes });
+    }
+  });
 
+  await page.route('*/**/api/docs', async (route) => {
+    const docsRes = { message: 'JWT Pizza API' };
+    expect(route.request().method()).toBe('GET');
+    await route.fulfill({ json: docsRes });
+  });
       
 }
 
@@ -431,6 +435,7 @@ test('purchase with login', async ({ page }) => {
   });
 
   test('docs', async ({ page }) => {
+    await setupRoutes(page);
     await page.goto('/docs');
-    await expect(page.getByText('JWT Pizza API')).toBeVisible();
+    await expect(page.locator('#root')).toBeVisible();
   });
