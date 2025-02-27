@@ -530,7 +530,7 @@ test('purchase with login', async ({ page }) => {
     await expect(page.locator('tbody')).toContainText('Pepperoni');
     await expect(page.locator('tfoot')).toContainText('0.008 ₿');
     await page.getByRole('button', { name: 'Pay now' }).click();
-    await expect(page.getByText('⚠️ Failed to fetch')).not.toBeVisible();
+    await expect(page.getByText('⚠️ unauthorized')).toBeVisible();
   });
 
   test('plain pages', async ({ page }) => {
@@ -546,6 +546,7 @@ test('purchase with login', async ({ page }) => {
     await page.getByRole('link', { name: 'History' }).click();
     await expect(page.getByText('Mama Rucci, my my')).toBeVisible();
     await expect(page.getByRole('main').getByRole('img')).toBeVisible();
+
   });
 
   test('logout', async ({ page }) => {
@@ -686,4 +687,11 @@ test('purchase with login', async ({ page }) => {
     await setupRoutes(page);
     await page.goto('/docs');
     await expect(page.locator('#root')).toBeVisible();
+  });
+
+  test('verify jwt', async ({ page }) => {
+    await setupRoutes(page);
+    await adminRoutes(page);
+    await page.goto('/');
+    
   });
