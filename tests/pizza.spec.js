@@ -530,6 +530,7 @@ test('purchase with login', async ({ page }) => {
     await expect(page.locator('tbody')).toContainText('Pepperoni');
     await expect(page.locator('tfoot')).toContainText('0.008 ₿');
     await page.getByRole('button', { name: 'Pay now' }).click();
+    await expect(page.getByText('⚠️ Failed to fetch')).not.toBeVisible();
   });
 
   test('plain pages', async ({ page }) => {
